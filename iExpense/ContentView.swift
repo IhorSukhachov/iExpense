@@ -26,6 +26,11 @@ struct SecondView: View {
     }
 }
 */
+struct User: Codable {
+    let firstName: String
+    let lastName: String
+}
+
 struct ContentView: View {
     //   @State private var showingSheet = false
     //   @State private var user = User()
@@ -34,27 +39,18 @@ struct ContentView: View {
     
     @AppStorage("tapCount") private var tapCount = 0
     
+    @State private var user = User(firstName: "Ihor", lastName: "Sukhachov")
+    
     var body: some View {
         NavigationStack {
             VStack {
-                List {
-                    ForEach(numbers, id:\.self) {
-                        Text("Row number: \($0)")
-                    }
-                    .onDelete(perform: removeRows)
+                Button("save user") {
+                    let encoder = JSONEncoder()
                     
+                    if let data = try? encoder.encode(user) {
+                        UserDefaults.standard.set(data, forKey: "userData")
+                    }
                 }
-                Button("Add number") {
-                    numbers.append(currentNumber)
-                    currentNumber += 1
-                }
-                
-                Button("Tap count \(tapCount)") {
-                    tapCount += 1
-                }
-            }
-            .toolbar {
-                EditButton()
             }
         }
         
