@@ -6,7 +6,7 @@
 //
 import Observation
 import SwiftUI
-
+/*
 @Observable
 class User {
     var firstName = "Ihor"
@@ -25,25 +25,30 @@ struct SecondView: View {
         }
     }
 }
-
+*/
 struct ContentView: View {
-    @State private var showingSheet = false
+    //   @State private var showingSheet = false
+    //   @State private var user = User()
+    @State private var numbers = [Int]()
+    @State private var currentNumber = 1
     
-    
-    @State private var user = User()
     var body: some View {
         VStack {
-            Text("Your name is \(user.firstName) \(user.lastName)")
-            
-            TextField("Firstname", text: $user.firstName)
-            TextField("Lastname", text: $user.lastName)
+            List {
+                ForEach(numbers, id:\.self) {
+                    Text("Row number: \($0)")
+                }
+                .onDelete(perform: removeRows)
+                
+            }
+            Button("Add number") {
+                numbers.append(currentNumber)
+                currentNumber += 1
+            }
         }
-        .padding()
-        Button("Show sheet") {
-            showingSheet.toggle()
-        }.sheet(isPresented: $showingSheet) {
-           SecondView(name: "Frodo")
-        }
+    }
+    func removeRows(at offsets: IndexSet) {
+        numbers.remove(atOffsets: offsets)
     }
 }
 
