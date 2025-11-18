@@ -28,15 +28,20 @@ struct ContentView: View {
             List {
                 ForEach(expenses.items, id: \.name) { item in
                     Text(item.name)
-                }
+                }.onDelete(perform: removeItems)
             }.navigationTitle("iExpense")
                 .toolbar {
-                    
+                    Button("Add expense", systemImage: "plus") {
+                        let newItem = ExpenseItem(name: "New expense", type: "Food", amount: 100.00)
+                        expenses.items.append(newItem)
+                    }
                 }
         }
          
     }
-    
+    func removeItems(at offsets: IndexSet) {
+        expenses.items.remove(atOffsets: offsets)
+    }
 }
 
 #Preview {
