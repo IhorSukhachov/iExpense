@@ -7,6 +7,7 @@
 import SwiftUI
 
 struct ExpenseItem {
+    let id = UUID()
     let name: String
     let type: String
     let amount: Double
@@ -26,7 +27,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(expenses.items, id: \.name) { item in
+                ForEach(expenses.items, id: \.id) { item in
                     Text(item.name)
                 }.onDelete(perform: removeItems)
             }.navigationTitle("iExpense")
