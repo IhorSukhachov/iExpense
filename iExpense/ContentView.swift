@@ -34,7 +34,7 @@ struct ContentView: View {
             }.navigationTitle("iExpense")
                 .toolbar {
                     Button("Add expense", systemImage: "plus") {
-                        
+                        showingAddExpense = true
                     }
                 }
         }.sheet(isPresented: $showingAddExpense) {
