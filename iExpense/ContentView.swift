@@ -40,35 +40,73 @@ struct ContentView: View {
     @State private var expenses = Expenses()
     @State private var showingAddExpense = false
     
+    
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(expenses.items) { item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name).font(.headline)
-                            Text(item.type)
+            List() {
+              //  Text()
+                Section("Personal") {
+                    let personal = expenses.items.filter { $0.type == "Personal" }
+                    
+                    ForEach(personal) { item in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name).font(.headline)
+                                Text(item.type)
+                            }
+                            Spacer()
+                            
+                            Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD")).foregroundStyle(expenseStyle(amount: item.amount))
                         }
-                        Spacer()
                         
-                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD")).foregroundStyle(expenseStyle(amount: item.amount))
-                        
+                    }.onDelete { offsets in
+                        deleteItems(from: personal, at: offsets)
                     }
-                }.onDelete(perform: removeItems)
-            }.navigationTitle("iExpense")
+                }
+                   // Spacer()
+                 //   Text()
+                    Section("Business") {
+                        let business = expenses.items.filter { $0.type == "Business" }
+                        
+                        ForEach(business) { item in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(item.name).font(.headline)
+                                    Text(item.type)
+                                }
+                                Spacer()
+                                
+                                Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD")).foregroundStyle(expenseStyle(amount: item.amount))
+                            }
+                            
+                            }.onDelete { offsets in
+                                deleteItems(from: business, at: offsets)
+                        }
+                    }
+                }.navigationTitle("iExpense")
                 .toolbar {
                     Button("Add expense", systemImage: "plus") {
                         showingAddExpense = true
                     }
                 }
-        }.sheet(isPresented: $showingAddExpense) {
-            AddView(expenses: expenses)
+            }.sheet(isPresented: $showingAddExpense) {
+                AddView(expenses: expenses)
+            
         }
          
     }
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
-    }
+//    func removeItems(at offsets: IndexSet) {
+//        expenses.items.remove(atOffsets: offsets)
+//    }
+            
+     func deleteItems(from list: [ExpenseItem], at offsets: IndexSet) {
+                for index in offsets {
+                    let item = list[index]
+                    expenses.items.removeAll { $0.id == item.id }
+                }
+            }
+    
+    
     
     func expenseStyle(amount: Double) -> Color {
         if amount < 10 {
