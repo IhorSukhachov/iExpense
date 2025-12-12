@@ -17,8 +17,18 @@ struct ContentView: View {
     private var itemsSortedByAmount: [ExpenseItem]
     
     @State private var sortByName: Bool = true
+    
+    @State private var filter: String = "All"
     private var items: [ExpenseItem] {
-        sortByName ? itemsSortedByName : itemsSortedByAmount
+        let base = sortByName ? itemsSortedByName : itemsSortedByAmount
+        switch filter {
+        case "Personal":
+            return base.filter { $0.type == "Personal" }
+        case "Business":
+            return base.filter { $0.type == "Business" }
+        default:
+            return base
+        }
     }
     
     
@@ -75,6 +85,14 @@ struct ContentView: View {
                         Picker("Sort", selection: $sortByName) {
                             Text("Sort by name").tag(true)
                             Text("Sort by amount").tag(false)
+                        }
+                    }
+                    
+                    Menu("Filter", systemImage: "line.3.horizontal.decrease.circle") {
+                        Picker("Filter", selection: $filter) {
+                            Text("All").tag("All")
+                            Text("Personal").tag("Personal")
+                            Text("Business").tag("Business")
                         }
                     }
                     
