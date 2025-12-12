@@ -12,7 +12,7 @@ struct iExpenseApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [ExpenseItem.self])
+                .modelContainer(for: ExpenseItem.self)
         }
     }
 }

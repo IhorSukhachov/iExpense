@@ -7,6 +7,7 @@
 import SwiftData
 import Foundation
 
+@Model
 class ExpenseItem: Identifiable {
     var id: UUID = UUID()
     var name: String

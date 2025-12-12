@@ -4,32 +4,13 @@
 //
 //  Created by Ihor Sukhachov on 17.11.2025.
 //
+import SwiftData
 import SwiftUI
 
 
-@Observable
-class Expenses {
-    var items = [ExpenseItem]() {
-        didSet {
-            if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
-            }
-        }
-    }
-    init() {
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
-            if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
-                items = decodedItems
-                return
-            }
-        }
-        items = []
-    }
-    
-}
-
 struct ContentView: View {
-    @State private var expenses = Expenses()
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: [SortDescriptor(\ExpenseItem.name)]) private var items: [ExpenseItem]
     @State private var showingAddExpense = false
     
     
@@ -38,7 +19,7 @@ struct ContentView: View {
             List() {
               //  Text()
                 Section("Personal") {
-                    let personal = expenses.items.filter { $0.type == "Personal" }
+                    let personal = items.filter { $0.type == "Personal" }
                     
                     ForEach(personal) { item in
                         HStack {
@@ -58,7 +39,7 @@ struct ContentView: View {
                    // Spacer()
                  //   Text()
                     Section("Business") {
-                        let business = expenses.items.filter { $0.type == "Business" }
+                        let business = items.filter { $0.type == "Business" }
                         
                         ForEach(business) { item in
                             HStack {
@@ -82,7 +63,7 @@ struct ContentView: View {
                     }
                 }
             }.sheet(isPresented: $showingAddExpense) {
-                AddView(expenses: expenses)
+                AddView()
             
         }
          
@@ -94,7 +75,7 @@ struct ContentView: View {
      func deleteItems(from list: [ExpenseItem], at offsets: IndexSet) {
                 for index in offsets {
                     let item = list[index]
-                    expenses.items.removeAll { $0.id == item.id }
+                    modelContext.delete(item)
                 }
             }
     
